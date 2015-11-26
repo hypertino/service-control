@@ -2,26 +2,23 @@ package eu.inn.servicecontrol
 
 import scala.util.control.Breaks._
 
-trait ConsoleControllerComponent extends api.ConsoleControllerComponent{
-  this:api.ConsoleIOComponent
-    with api.ServiceControlComponent  ⇒
+trait ServiceComponent extends api.ServiceComponent{
+  this:api.ConsoleIOComponent  ⇒
 
-  val consoleControl = new ConsoleControl
-
-  class ConsoleControl extends api.ConsoleControl {
+  trait Service extends api.Service {
     @volatile var isStopping: Boolean = false
 
-    def serviceEntry() = {
+    override def mainEntryPoint() = {
       Runtime.getRuntime.addShutdownHook(new Thread() {
         override def run() {
           if (!isStopping) {
             isStopping = true
-            serviceControl.stopService(controlBreak = true)
+            stopService(controlBreak = true)
           }
         }
       })
 
-      serviceControl.startService()
+      startService()
 
       breakable {
         for (cmd ← consoleIO.inputIterator())
@@ -33,7 +30,7 @@ trait ConsoleControllerComponent extends api.ConsoleControllerComponent{
       case Some("quit") ⇒
         if (!isStopping) {
           isStopping = true
-          serviceControl.stopService(controlBreak = false)
+          stopService(controlBreak = false)
         }
         break()
 
