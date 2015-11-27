@@ -6,7 +6,3 @@ trait Console {
   def writeln(o: Any)
   def writeln()
 }
-
-trait ConsoleComponent {
-  def console: Console
-}

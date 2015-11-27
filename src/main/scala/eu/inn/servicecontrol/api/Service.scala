@@ -5,7 +5,3 @@ trait Service {
   def startService(): Unit
   def stopService(controlBreak: Boolean): Unit
 }
-
-trait ServiceComponent {
-  def service: Service
-}

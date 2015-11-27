@@ -21,7 +21,3 @@ class StdConsole extends api.Console {
   def writeln(o: Any) = println(o)
   def writeln() = println()
 }
-
-trait StdConsoleComponent extends api.ConsoleComponent {
-  val console = new StdConsole
-}
