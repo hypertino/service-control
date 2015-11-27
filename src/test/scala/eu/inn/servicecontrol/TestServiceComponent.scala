@@ -2,11 +2,11 @@ package eu.inn.servicecontrol
 
 import org.scalatest._
 
-class ComponentRepository(commandSeq: Seq[String]) extends ServiceComponent
-  with api.ConsoleIOComponent {
+class ComponentRepositoryMock(commandSeq: Seq[String]) extends ControlledServiceComponent
+  with api.ConsoleComponent {
   var started = false
   var stopped = false
-  val service = new Service {
+  val service = new ControlledService {
     override def startService(): Unit = {
       started = true
     }
@@ -15,7 +15,7 @@ class ComponentRepository(commandSeq: Seq[String]) extends ServiceComponent
     }
   }
 
-  val consoleIO: api.ConsoleIO = new api.ConsoleIO {
+  val console: api.Console = new api.Console {
 
     override def inputIterator(): Iterator[Option[String]] = commandSeq.map(Some(_)).toIterator
     override def write(o: Any): Unit = {}
@@ -27,14 +27,14 @@ class ComponentRepository(commandSeq: Seq[String]) extends ServiceComponent
 class TestServiceComponent extends FlatSpec with Matchers {
 
   "Service component" should " start service on main" in {
-    val r = new ComponentRepository(Seq())
+    val r = new ComponentRepositoryMock(Seq())
     r.service.mainEntryPoint()
     r.started should equal(true)
     r.stopped should equal(false)
   }
 
   "Service component" should " start on main and stop on quit command" in {
-    val r = new ComponentRepository(Seq("quit"))
+    val r = new ComponentRepositoryMock(Seq("quit"))
     r.service.mainEntryPoint()
     r.started should equal(true)
     r.stopped should equal(true)

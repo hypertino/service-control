@@ -1,9 +1,5 @@
-# service-conrtol
+package eu.inn.servicecontrol
 
-**service-control** is a bootstrap helper library for Scala services. It provides a basic DI, entry point and console control.
-
-A plain example how-to use a library:
-```
 class ComponentRepository
   extends ControlledServiceComponent
   with StdConsoleComponent {
@@ -23,9 +19,3 @@ object TestMain extends ComponentRepository {
     service.mainEntryPoint()
   }
 }
-```
-
-
-## License
-
-Product licensed under BSD 3-clause as stated in file LICENSE

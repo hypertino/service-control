@@ -2,10 +2,10 @@ package eu.inn.servicecontrol
 
 import scala.util.control.Breaks._
 
-trait ServiceComponent extends api.ServiceComponent{
-  this:api.ConsoleIOComponent  ⇒
+trait ControlledServiceComponent extends api.ServiceComponent{
+  this:api.ConsoleComponent  ⇒
 
-  trait Service extends api.Service {
+  trait ControlledService extends api.Service {
     @volatile var isStopping: Boolean = false
 
     override def mainEntryPoint() = {
@@ -21,7 +21,7 @@ trait ServiceComponent extends api.ServiceComponent{
       startService()
 
       breakable {
-        for (cmd ← consoleIO.inputIterator())
+        for (cmd ← console.inputIterator())
           executeCommand(cmd)
       }
     }
@@ -40,11 +40,11 @@ trait ServiceComponent extends api.ServiceComponent{
     }
 
     def help(): Unit = {
-      consoleIO.writeln("Available commands are: quit")
+      console.writeln("Available commands are: quit")
     }
 
     def unknownCommand(command: String): Unit = {
-      consoleIO.writeln(s"Unknown command: $command")
+      console.writeln(s"Unknown command: $command")
       help()
     }
   }

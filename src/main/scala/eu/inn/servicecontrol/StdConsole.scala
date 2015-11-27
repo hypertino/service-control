@@ -2,7 +2,7 @@ package eu.inn.servicecontrol
 
 import scala.io.StdIn
 
-class ConsoleIO extends api.ConsoleIO {
+class StdConsole extends api.Console {
   def inputIterator(): Iterator[Option[String]] = new Iterator[Option[String]] {
     var eof = false
     override def hasNext: Boolean = !eof
@@ -22,6 +22,6 @@ class ConsoleIO extends api.ConsoleIO {
   def writeln() = println()
 }
 
-trait ConsoleIOComponent extends api.ConsoleIOComponent {
-  val consoleIO = new ConsoleIO
+trait StdConsoleComponent extends api.ConsoleComponent {
+  val console = new StdConsole
 }
