@@ -4,24 +4,19 @@
 
 A plain example how-to use a library:
 ```
-class MyService(console: Console) extends ControlledService(console) {
-  def startService(): Unit = {
-    console.writeln("Service is started")
-  }
+class MyService(console: Console) extends api.Service {
+  console.writeln("Service is started")
+
   def stopService(controlBreak: Boolean): Unit = {
     console.writeln("Service is stopped")
   }
 }
 
-class TestModule extends Module {
-  bind [Console] to new StdConsole
+object TestMain extends ConsoleModule {
   bind [Service] to injected [MyService]
-}
 
-object TestMain extends TestModule {
   def main(args: Array[String]): Unit = {
-    val service = inject[Service]
-    service.mainEntryPoint()
+    inject[ServiceController].run()
   }
 }
 ```
