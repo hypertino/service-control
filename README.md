@@ -4,22 +4,23 @@
 
 A plain example how-to use a library:
 ```
-class ComponentRepository
-  extends ControlledServiceComponent
-  with StdConsoleComponent {
-
-  val service = new ControlledService {
-    def startService(): Unit = {
-      console.writeln("Service is started")
-    }
-    def stopService(controlBreak: Boolean): Unit = {
-      console.writeln("Service is stopped")
-    }
+class MyService(console: Console) extends ControlledService(console) {
+  def startService(): Unit = {
+    console.writeln("Service is started")
+  }
+  def stopService(controlBreak: Boolean): Unit = {
+    console.writeln("Service is stopped")
   }
 }
 
-object TestMain extends ComponentRepository {
+class TestModule extends Module {
+  bind [Console] to new StdConsole
+  bind [Service] to injected [MyService]
+}
+
+object TestMain extends TestModule {
   def main(args: Array[String]): Unit = {
+    val service = inject[Service]
     service.mainEntryPoint()
   }
 }
