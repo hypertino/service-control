@@ -27,7 +27,6 @@ class ConsoleMock(commandSeq: Seq[String]) extends Console {
   def write(o: Any): Unit = {}
   def writeln(o: Any): Unit = {}
   def writeln(): Unit = {}
-  def accept: Unit = {}
 }
 
 class CustomServiceController(console: Console, service: MyServiceMock, shutdownMonitor: ShutdownMonitor)

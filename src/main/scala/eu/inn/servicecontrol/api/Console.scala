@@ -5,5 +5,4 @@ trait Console {
   def write(o: Any): Unit
   def writeln(o: Any): Unit
   def writeln(): Unit
-  def accept(): Unit
 }
