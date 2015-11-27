@@ -20,4 +20,5 @@ class StdConsole extends api.Console {
   def write(o: Any) = print(o)
   def writeln(o: Any) = println(o)
   def writeln() = println()
+  def accept() = {}
 }
