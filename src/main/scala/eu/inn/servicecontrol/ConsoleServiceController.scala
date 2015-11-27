@@ -2,6 +2,7 @@ package eu.inn.servicecontrol
 
 import eu.inn.servicecontrol.api.{ServiceController, ShutdownMonitor, Service, Console}
 import scala.util.control.Breaks._
+import scala.util.control.NonFatal
 
 class ConsoleServiceController(service: Service, console: Console, shutdownMonitor: ShutdownMonitor)
   extends api.ServiceController  {
@@ -11,7 +12,14 @@ class ConsoleServiceController(service: Service, console: Console, shutdownMonit
   def run() {
     breakable {
       for (cmd ← console.inputIterator())
-        cmd.map(executeCommand)
+        cmd.foreach { commandString ⇒
+          try {
+            executeCommand(commandString)
+          }
+          catch {
+            case NonFatal(e) ⇒ handleException(e)
+          }
+        }
     }
   }
 
@@ -44,5 +52,9 @@ class ConsoleServiceController(service: Service, console: Console, shutdownMonit
   def unknownCommand(command: String): Unit = {
     console.writeln(s"Unknown command: $command")
     help()
+  }
+
+  def handleException(throwable: Throwable): Unit = {
+    console.writeln(throwable.toString)
   }
 }
