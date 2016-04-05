@@ -1,6 +1,6 @@
 package eu.inn.servicecontrol
 
-import eu.inn.servicecontrol.api.{ShutdownMonitor, ServiceController, Console}
+import eu.inn.servicecontrol.api.{Console, ServiceController, ShutdownMonitor}
 import scaldi.Module
 
 class ConsoleModule extends Module {

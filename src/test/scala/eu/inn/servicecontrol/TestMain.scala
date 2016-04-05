@@ -3,10 +3,10 @@ package eu.inn.servicecontrol
 import eu.inn.servicecontrol.api.{Service, Console, ServiceController}
 
 class MyService(console: Console) extends api.Service {
-  console.writeln("Service is started")
+  console.writeln("MyService started!")
 
   def stopService(controlBreak: Boolean): Unit = {
-    console.writeln("Service is stopped")
+    console.writeln("MyService stopped.")
   }
 }
 

@@ -1,14 +1,28 @@
 package eu.inn.servicecontrol
 
-import eu.inn.servicecontrol.api.{ServiceController, ShutdownMonitor, Service, Console}
+import eu.inn.servicecontrol.api.{Console, Service, ShutdownMonitor}
+import org.slf4j.LoggerFactory
+import scaldi.{Injectable, Injector}
+
 import scala.util.control.Breaks._
 import scala.util.control.NonFatal
 
-class ConsoleServiceController(service: Service, console: Console, shutdownMonitor: ShutdownMonitor)
-  extends api.ServiceController  {
+class ConsoleServiceController(implicit injector: Injector) extends Injectable with api.ServiceController  {
+  protected val log = LoggerFactory.getLogger(getClass)
+  private val shutdownMonitor = inject[ShutdownMonitor]
+  protected val console = inject[Console]
+
   @volatile protected var isStopping: Boolean = false
   shutdownMonitor.registerHandler(onShutdown)
 
+  private val service: Service = try {
+    inject[Service]
+  }
+  catch {
+    case NonFatal(e) ⇒
+      log.error(s"Service can't start!", e)
+      throw e
+  }
   def run() {
     breakable {
       for (cmd ← console.inputIterator())
@@ -24,8 +38,9 @@ class ConsoleServiceController(service: Service, console: Console, shutdownMonit
   }
 
   protected def onShutdown(): Unit = {
-    if (!isStopping) {
+    if (!isStopping && service != null) {
       isStopping = true
+      log.info(s"Shutting down service...")
       service.stopService(controlBreak = true)
     }
   }
@@ -37,6 +52,7 @@ class ConsoleServiceController(service: Service, console: Console, shutdownMonit
     case "quit" ⇒
       if (!isStopping) {
         isStopping = true
+        log.info(s"Quiting service...")
         service.stopService(controlBreak = false)
       }
       break()
@@ -51,10 +67,12 @@ class ConsoleServiceController(service: Service, console: Console, shutdownMonit
 
   def unknownCommand(command: String): Unit = {
     console.writeln(s"Unknown command: $command")
+    log.warn(s"Unknown command: $command")
     help()
   }
 
   def handleException(throwable: Throwable): Unit = {
     console.writeln(throwable.toString)
+    log.error(s"Service command failed with exception", throwable)
   }
 }

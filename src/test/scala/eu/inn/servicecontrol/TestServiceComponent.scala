@@ -4,7 +4,7 @@ import eu.inn.servicecontrol.api.{Console, ServiceController, ShutdownMonitor}
 import org.mockito.Mockito._
 import org.scalatest._
 import org.scalatest.mock.MockitoSugar.mock
-import scaldi.{Injectable, Module}
+import scaldi.{Injectable, Injector, Module}
 
 trait ServiceMock {
   def started()
@@ -13,12 +13,16 @@ trait ServiceMock {
 }
 
 class MyServiceMock(console: Console, mock: ServiceMock) extends api.Service{
+  def serviceName = "MyServiceMock"
   mock.started()
   def stopService(controlBreak: Boolean): Unit = {
     mock.stopped()
   }
   def customCommand(): Unit = {
     mock.customCommand()
+  }
+  def failingCommand(): Unit = {
+    throw new RuntimeException("Command failed")
   }
 }
 
@@ -29,11 +33,13 @@ class ConsoleMock(commandSeq: Seq[String]) extends Console {
   def writeln(): Unit = {}
 }
 
-class CustomServiceController(console: Console, service: MyServiceMock, shutdownMonitor: ShutdownMonitor)
-  extends ConsoleServiceController(service, console, shutdownMonitor)  {
+class CustomServiceController(implicit injector: Injector)
+  extends ConsoleServiceController  {
+  val service = inject[MyServiceMock]
 
   override def customCommand = {
     case "custom" ⇒ service.customCommand()
+    case "fail" ⇒ service.failingCommand()
   }
 }
 
@@ -76,6 +82,16 @@ class TestServiceComponent extends FlatSpec with Matchers {
     launcher.run()
     verify(m).started()
     verify(m).customCommand()
+    verifyNoMoreInteractions(m)
+  }
+
+  "Service component" should " handle command exception" in {
+    import Injectable._
+    val m = mock[ServiceMock]
+    implicit val injector = new TestModuleMock(Seq("fail"), m)
+    val launcher = inject[api.ServiceController]
+    launcher.run()
+    verify(m).started()
     verifyNoMoreInteractions(m)
   }
 }
