@@ -1,4 +1,8 @@
-# service-conrtol
+# service-control
+
+[![Build Status](https://travis-ci.org/InnovaCo/service-control.svg?branch=master)](https://travis-ci.org/InnovaCo/service-control)
+
+[ Latest Releases ](https://oss.sonatype.org/#nexus-search;gav~eu.inn~service-control_*~~~)
 
 **service-control** is a bootstrap helper library for Scala services. It provides a basic DI, entry point and console control.
 
