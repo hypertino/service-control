@@ -52,43 +52,29 @@ class TestModuleMock(commandSeq: Seq[String], mock: ServiceMock) extends Module 
 
 class TestServiceComponent extends FlatSpec with Matchers with MockFactory {
 
-  "Service component" should " start service on main" in {
+  "Service component" should " start on main, run custom command and stop on quit command" in {
     import Injectable._
     val m = stub[ServiceMock]
-    implicit val injector = new TestModuleMock(Seq(), m)
+    implicit val injector = new TestModuleMock(Seq("custom", "quit"), m)
     val launcher = inject[api.ServiceController]
     launcher.run()
 
-    m.started _ verify()
-  }
-
-  "Service component" should " start on main and stop on quit command" in {
-    import Injectable._
-    val m = stub[ServiceMock]
-    implicit val injector = new TestModuleMock(Seq("quit"), m)
-    val launcher = inject[api.ServiceController]
-    launcher.run()
-
-    m.started _ verify()
-    m.stopped _ verify()
-  }
-
-  "Service component" should " start service and execute custom command" in {
-    import Injectable._
-    val m = stub[ServiceMock]
-    implicit val injector = new TestModuleMock(Seq("custom"), m)
-    val launcher = inject[api.ServiceController]
-    launcher.run()
-    m.started _ verify()
-    m.customCommand _ verify()
+    inSequence {
+      m.started _ verify()
+      m.customCommand _ verify()
+      m.stopped _ verify()
+    }
   }
 
   "Service component" should " handle command exception" in {
     import Injectable._
     val m = stub[ServiceMock]
-    implicit val injector = new TestModuleMock(Seq("fail"), m)
+    implicit val injector = new TestModuleMock(Seq("fail", "quit"), m)
     val launcher = inject[api.ServiceController]
     launcher.run()
-    m.started _ verify()
+    inSequence {
+      m.started _ verify()
+      m.stopped _ verify()
+    }
   }
 }
