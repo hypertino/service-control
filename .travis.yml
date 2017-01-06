@@ -1,19 +1,21 @@
 language: scala
+
 scala:
-- 2.11.8
+  - "2.12.1"
+  - "2.11.8"
+
 sudo: false
 script: $TRAVIS_BUILD_DIR/travis/build.sh
+
 jdk:
-- oraclejdk8
-addons:
-  apt:
-    packages:
-    - oracle-java8-installer
+  - oraclejdk8
+
 cache:
   directories:
   - $HOME/.m2
   - $HOME/.ivy2
   - $HOME/.sbt
+
 env:
   global:
   - secure: G5Pnx6Lwd7V3xYBB/MnZloXXuuBG8wsGGAWIJhJ1og/cuRGFdc+rr8TLvQtXx/EJ/zCuol//03eEg76cE7rF1CPb7rGMRpi+QkqoYKL7+b3fz3rr5L3SDRCFMwyH2ArsNsastsX4rmrsrrF3wACklYdHkreK40CMTUUZ/hDlpkS4Snv4t8wM1VcNm1VxL32E32T+iIFkzhq4u7nqHzm4o5jc43P/R3YGIAdmDdr1azMvXV/dKrGt7PBQmFeJMv8EU1/Oe4xjoJgcS9temeZA/YFkPfpzPMrBJomlLM5CJdj3R9oI3lPJaVZ1WsFqjQU7tcMfHQUy2XZhhbS8krXA4HtM/XP1oWTd2FYqBGGisz68z/JttWvpu1xwXFIytpAtS6NSB1Q6LQvvsduJgqVX5rhyFqpIvF9gAuanTRB6rFrC8zvq+DhH4yAdw610PZsJcpRtBvOnPNE4uZKky0iXmNnZNgowDW7gy8OnW5pQ8+kTsZcXEFF/bjLBZLjjJx+1ziigs9R3WMekqwjb2uXMPpU5R3KMntt8ODZKp0uq5oh22qVcefXon8o0bAN2GBZDsQvrBByiIBwTClaUNnCtyZLppaw+1julyjx/Z+H8vlguJ/Y+wBXvIjEeUGv9rJ3JpYSW/xAY2fUu90aV53pMKPruybc9KtL9SKVjt2D2yfo=

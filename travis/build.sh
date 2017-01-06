@@ -6,10 +6,10 @@ if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "master" ]]; then
   echo "$key_password" | gpg --passphrase-fd 0 ./travis/ht-oss-private.asc.gpg
 
   if grep "version\s*:=.*SNAPSHOT" build.sbt; then
-    sbt 'alias testPublish =; test; publishSigned' +testPublish
+    sbt ++$TRAVIS_SCALA_VERSION test publishSigned
   else
-    sbt 'alias testPublish =; test; publishSigned' +testPublish sonatypeReleaseAll
+    sbt ++$TRAVIS_SCALA_VERSION test publishSigned sonatypeReleaseAll
   fi
 else
-  sbt 'alias testAll =; test' +testAll
+  sbt ++$TRAVIS_SCALA_VERSION test
 fi
