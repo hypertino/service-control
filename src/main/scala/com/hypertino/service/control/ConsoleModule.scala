@@ -1,6 +1,6 @@
-package eu.inn.servicecontrol
+package com.hypertino.service.control
 
-import eu.inn.servicecontrol.api.{Console, ServiceController, ShutdownMonitor}
+import com.hypertino.service.control.api.{Console, ServiceController, ShutdownMonitor}
 import scaldi.Module
 
 class ConsoleModule extends Module {

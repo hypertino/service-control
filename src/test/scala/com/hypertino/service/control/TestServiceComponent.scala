@@ -1,9 +1,8 @@
-package eu.inn.servicecontrol
+package com.hypertino.service.control
 
-import eu.inn.servicecontrol.api.{Console, ServiceController, ShutdownMonitor}
-import org.mockito.Mockito._
+import com.hypertino.service.control.api.{Console, ServiceController, ShutdownMonitor}
+import org.scalamock.scalatest.MockFactory
 import org.scalatest._
-import org.scalatest.mock.MockitoSugar.mock
 import scaldi.{Injectable, Injector, Module}
 
 trait ServiceMock {
@@ -35,7 +34,7 @@ class ConsoleMock(commandSeq: Seq[String]) extends Console {
 
 class CustomServiceController(implicit injector: Injector)
   extends ConsoleServiceController  {
-  val service = inject[MyServiceMock]
+  private val service = inject[MyServiceMock]
 
   override def customCommand = {
     case "custom" ⇒ service.customCommand()
@@ -51,47 +50,45 @@ class TestModuleMock(commandSeq: Seq[String], mock: ServiceMock) extends Module 
   bind [ShutdownMonitor] to injected [RuntimeShutdownMonitor]
 }
 
-class TestServiceComponent extends FlatSpec with Matchers {
+class TestServiceComponent extends FlatSpec with Matchers with MockFactory {
 
   "Service component" should " start service on main" in {
     import Injectable._
-    val m = mock[ServiceMock]
+    val m = stub[ServiceMock]
     implicit val injector = new TestModuleMock(Seq(), m)
     val launcher = inject[api.ServiceController]
     launcher.run()
-    verify(m).started()
-    verifyNoMoreInteractions(m)
+
+    m.started _ verify()
   }
 
   "Service component" should " start on main and stop on quit command" in {
     import Injectable._
-    val m = mock[ServiceMock]
+    val m = stub[ServiceMock]
     implicit val injector = new TestModuleMock(Seq("quit"), m)
     val launcher = inject[api.ServiceController]
     launcher.run()
-    verify(m).started()
-    verify(m).stopped()
-    verifyNoMoreInteractions(m)
+
+    m.started _ verify()
+    m.stopped _ verify()
   }
 
   "Service component" should " start service and execute custom command" in {
     import Injectable._
-    val m = mock[ServiceMock]
+    val m = stub[ServiceMock]
     implicit val injector = new TestModuleMock(Seq("custom"), m)
     val launcher = inject[api.ServiceController]
     launcher.run()
-    verify(m).started()
-    verify(m).customCommand()
-    verifyNoMoreInteractions(m)
+    m.started _ verify()
+    m.customCommand _ verify()
   }
 
   "Service component" should " handle command exception" in {
     import Injectable._
-    val m = mock[ServiceMock]
+    val m = stub[ServiceMock]
     implicit val injector = new TestModuleMock(Seq("fail"), m)
     val launcher = inject[api.ServiceController]
     launcher.run()
-    verify(m).started()
-    verifyNoMoreInteractions(m)
+    m.started _ verify()
   }
 }

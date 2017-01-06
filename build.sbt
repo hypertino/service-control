@@ -1,18 +1,20 @@
-import sbt.Keys._
-
 name := "service-control"
 
-version := "0.2"
+version := "0.3-SNAPSHOT"
 
-organization := "eu.inn"
+organization := "com.hypertino"
 
 scalaVersion := "2.11.8"
 
-crossScalaVersions := Seq("2.11.8")
+crossScalaVersions := Seq("2.11.8", "2.10.6")
 
 libraryDependencies ++= Seq(
-  "org.scaldi" %% "scaldi" % "0.5.6",
-  "org.slf4j" % "slf4j-api" % "1.7.21",
-  "org.mockito" % "mockito-all" % "1.10.19" % "test",
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+  "org.scaldi" %% "scaldi" % "0.5.8",
+  "org.slf4j" % "slf4j-api" % "1.7.22",
+  "org.scalatest" %% "scalatest" % "3.0.0" % "test",
+  "com.hypertino" %% "scalamock-scalatest-support" % "3.4-SNAPSHOT" % "test"
+)
+
+resolvers ++= Seq(
+	Resolver.sonatypeRepo("public")
 )

@@ -1,4 +1,4 @@
-package eu.inn.servicecontrol.api
+package com.hypertino.service.control.api
 
 trait ServiceController {
   def run(): Unit

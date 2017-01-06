@@ -1,6 +1,6 @@
-package eu.inn.servicecontrol
+package com.hypertino.service.control
 
-import eu.inn.servicecontrol.api.{Service, Console, ServiceController}
+import com.hypertino.service.control.api.{Console, Service, ServiceController}
 
 class MyService(console: Console) extends api.Service {
   console.writeln("MyService started!")

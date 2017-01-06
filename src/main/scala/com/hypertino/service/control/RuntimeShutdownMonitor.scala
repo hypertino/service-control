@@ -1,6 +1,6 @@
-package eu.inn.servicecontrol
+package com.hypertino.service.control
 
-import eu.inn.servicecontrol.api.ShutdownMonitor
+import com.hypertino.service.control.api.ShutdownMonitor
 
 import scala.collection.concurrent.TrieMap
 

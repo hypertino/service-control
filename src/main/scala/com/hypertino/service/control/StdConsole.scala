@@ -1,4 +1,4 @@
-package eu.inn.servicecontrol
+package com.hypertino.service.control
 
 import scala.io.StdIn
 

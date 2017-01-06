@@ -1,16 +1,16 @@
-package eu.inn.servicecontrol
+package com.hypertino.service.control
 
-import eu.inn.servicecontrol.api.{Console, Service, ShutdownMonitor}
-import org.slf4j.LoggerFactory
+import com.hypertino.service.control.api.{Console, Service, ShutdownMonitor}
+import org.slf4j.{Logger, LoggerFactory}
 import scaldi.{Injectable, Injector}
 
 import scala.util.control.Breaks._
 import scala.util.control.NonFatal
 
 class ConsoleServiceController(implicit injector: Injector) extends Injectable with api.ServiceController  {
-  protected val log = LoggerFactory.getLogger(getClass)
+  protected val log: Logger = LoggerFactory.getLogger(getClass)
   private val shutdownMonitor = inject[ShutdownMonitor]
-  protected val console = inject[Console]
+  protected val console: Console = inject[Console]
 
   @volatile protected var isStopping: Boolean = false
   shutdownMonitor.registerHandler(onShutdown)
