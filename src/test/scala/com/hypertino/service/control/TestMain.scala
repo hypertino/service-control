@@ -2,11 +2,14 @@ package com.hypertino.service.control
 
 import com.hypertino.service.control.api.{Console, Service, ServiceController}
 
+import scala.concurrent.Future
+import scala.concurrent.duration.FiniteDuration
+
 class MyService(console: Console) extends api.Service {
   console.writeln("MyService started!")
 
-  def stopService(controlBreak: Boolean): Unit = {
-    console.writeln("MyService stopped.")
+  def stopService(controlBreak: Boolean, timeout: FiniteDuration): Future[Unit] = {
+    Future.successful(console.writeln("MyService stopped."))
   }
 }
 

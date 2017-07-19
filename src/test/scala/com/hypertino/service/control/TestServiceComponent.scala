@@ -5,6 +5,9 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest._
 import scaldi.{Injectable, Injector, Module}
 
+import scala.concurrent.Future
+import scala.concurrent.duration.FiniteDuration
+
 trait ServiceMock {
   def started()
   def stopped()
@@ -14,8 +17,8 @@ trait ServiceMock {
 class MyServiceMock(console: Console, mock: ServiceMock) extends api.Service{
   def serviceName = "MyServiceMock"
   mock.started()
-  def stopService(controlBreak: Boolean): Unit = {
-    mock.stopped()
+  def stopService(controlBreak: Boolean, timeout: FiniteDuration): Future[Unit] = {
+    Future.successful(mock.stopped())
   }
   def customCommand(): Unit = {
     mock.customCommand()

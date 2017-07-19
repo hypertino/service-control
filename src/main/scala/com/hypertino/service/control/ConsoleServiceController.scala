@@ -4,6 +4,8 @@ import com.hypertino.service.control.api.{Console, Service, ShutdownMonitor}
 import org.slf4j.{Logger, LoggerFactory}
 import scaldi.{Injectable, Injector}
 
+import scala.concurrent.Await
+import scala.concurrent.duration._
 import scala.util.control.Breaks._
 import scala.util.control.NonFatal
 
@@ -11,6 +13,7 @@ class ConsoleServiceController(implicit injector: Injector) extends Injectable w
   protected val log: Logger = LoggerFactory.getLogger(getClass)
   private val shutdownMonitor = inject[ShutdownMonitor]
   protected val console: Console = inject[Console]
+  protected val timeout: FiniteDuration = 30.seconds
 
   @volatile protected var isStopping: Boolean = false
   shutdownMonitor.registerHandler(onShutdown)
@@ -37,12 +40,30 @@ class ConsoleServiceController(implicit injector: Injector) extends Injectable w
     }
   }
 
-  protected def onShutdown(): Unit = {
+  protected def stop(controlBreak: Boolean): Unit = {
     if (!isStopping && service != null) {
       isStopping = true
-      log.info(s"Shutting down service...")
-      service.stopService(controlBreak = true)
+      if (controlBreak) {
+        log.info(s"Shutting down service...")
+      }
+      else {
+        log.info(s"Quiting service...")
+      }
+      try {
+        Await.result(service.stopService(controlBreak, timeout), timeout + 0.5.seconds)
+      }
+      catch {
+        case NonFatal(e) ⇒
+          log.info(s"Failed while shutting down", e)
+      }
     }
+    else {
+      log.warn(s"Shutdown is already requested, waiting...")
+    }
+  }
+
+  protected def onShutdown(): Unit = {
+    stop(true)
   }
 
   def executeCommand: PartialFunction[String,Unit] = customCommand orElse defaultCommand
@@ -50,11 +71,7 @@ class ConsoleServiceController(implicit injector: Injector) extends Injectable w
 
   def defaultCommand: PartialFunction[String, Unit] = {
     case "quit" ⇒
-      if (!isStopping) {
-        isStopping = true
-        log.info(s"Quiting service...")
-        service.stopService(controlBreak = false)
-      }
+      stop(false)
       break()
 
     case "" | "help" ⇒ help()
