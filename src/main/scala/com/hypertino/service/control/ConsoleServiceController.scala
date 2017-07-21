@@ -10,7 +10,8 @@ import scala.util.{Failure, Success, Try}
 import scala.util.control.Breaks._
 import scala.util.control.NonFatal
 
-class ConsoleServiceController(implicit injector: Injector) extends Injectable with api.ServiceController  {
+class ConsoleServiceController(serviceIdentifier: Option[String] = None)
+                              (implicit injector: Injector) extends Injectable with api.ServiceController  {
   protected val log: Logger = LoggerFactory.getLogger(getClass)
   private val shutdownMonitor = inject[ShutdownMonitor]
   protected val console: Console = inject[Console]
@@ -21,7 +22,11 @@ class ConsoleServiceController(implicit injector: Injector) extends Injectable w
   shutdownMonitor.registerHandler(onShutdown)
 
   private val service: Service = try {
-    inject[Service]
+    serviceIdentifier.map { si ⇒
+      inject[Service] (identified by si)
+    } getOrElse {
+      inject[Service]
+    }
   }
   catch {
     case NonFatal(e) ⇒
