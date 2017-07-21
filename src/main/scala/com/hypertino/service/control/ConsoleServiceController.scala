@@ -12,6 +12,7 @@ import scala.util.control.NonFatal
 
 class ConsoleServiceController(serviceIdentifier: Option[String] = None)
                               (implicit injector: Injector) extends Injectable with api.ServiceController  {
+
   protected val log: Logger = LoggerFactory.getLogger(getClass)
   private val shutdownMonitor = inject[ShutdownMonitor]
   protected val console: Console = inject[Console]

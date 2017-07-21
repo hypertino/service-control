@@ -3,8 +3,8 @@ package com.hypertino.service.control
 import com.hypertino.service.control.api.{Console, ServiceController, ShutdownMonitor}
 import scaldi.Module
 
-class ConsoleModule extends Module {
+class ConsoleModule(serviceIdentifier: Option[String] = None) extends Module {
   bind [Console] to new StdConsole
-  bind [ServiceController] to injected [ConsoleServiceController]
+  bind [ServiceController] to new ConsoleServiceController(serviceIdentifier)
   bind [ShutdownMonitor] to injected [RuntimeShutdownMonitor]
 }
