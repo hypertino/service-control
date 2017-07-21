@@ -1,5 +1,7 @@
 package com.hypertino.service.control.api
 
+import scala.concurrent.Future
+
 trait ServiceController {
-  def run(): Unit
+  def run(): Future[Boolean]
 }

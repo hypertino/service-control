@@ -4,8 +4,9 @@ import com.hypertino.service.control.api.{Console, Service, ShutdownMonitor}
 import org.slf4j.{Logger, LoggerFactory}
 import scaldi.{Injectable, Injector}
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future, Promise}
 import scala.concurrent.duration._
+import scala.util.{Failure, Success, Try}
 import scala.util.control.Breaks._
 import scala.util.control.NonFatal
 
@@ -14,6 +15,7 @@ class ConsoleServiceController(implicit injector: Injector) extends Injectable w
   private val shutdownMonitor = inject[ShutdownMonitor]
   protected val console: Console = inject[Console]
   protected val timeout: FiniteDuration = 30.seconds
+  private val serviceStopped = Promise[Boolean]
 
   @volatile protected var isStopping: Boolean = false
   shutdownMonitor.registerHandler(onShutdown)
@@ -26,7 +28,8 @@ class ConsoleServiceController(implicit injector: Injector) extends Injectable w
       log.error(s"Service can't start!", e)
       throw e
   }
-  def run() {
+
+  def run(): Future[Boolean] = {
     breakable {
       for (cmd ← console.inputIterator())
         cmd.foreach { commandString ⇒
@@ -38,6 +41,7 @@ class ConsoleServiceController(implicit injector: Injector) extends Injectable w
           }
         }
     }
+    serviceStopped.future
   }
 
   protected def stop(controlBreak: Boolean): Unit = {
@@ -50,7 +54,13 @@ class ConsoleServiceController(implicit injector: Injector) extends Injectable w
         log.info(s"Quiting service...")
       }
       try {
-        Await.result(service.stopService(controlBreak, timeout), timeout + 0.5.seconds)
+
+        serviceStopped.success(
+          Try(Await.result(service.stopService(controlBreak, timeout), timeout + 0.5.seconds)) match {
+            case Success(_) ⇒ true
+            case Failure(_) ⇒ false
+          }
+        )
       }
       catch {
         case NonFatal(e) ⇒

@@ -3,6 +3,7 @@ package com.hypertino.service.control
 import com.hypertino.service.control.api.{Console, ServiceController, ShutdownMonitor}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest._
+import org.scalatest.concurrent.ScalaFutures
 import scaldi.{Injectable, Injector, Module}
 
 import scala.concurrent.Future
@@ -53,20 +54,21 @@ class TestModuleMock(commandSeq: Seq[String], mock: ServiceMock) extends Module 
   bind [ShutdownMonitor] to injected [RuntimeShutdownMonitor]
 }
 
-class TestServiceComponent extends FlatSpec with Matchers with MockFactory {
+class TestServiceComponent extends FlatSpec with Matchers with MockFactory with ScalaFutures {
 
   "Service component" should " start on main, run custom command and stop on quit command" in {
     import Injectable._
     val m = stub[ServiceMock]
     implicit val injector = new TestModuleMock(Seq("custom", "quit"), m)
     val launcher = inject[api.ServiceController]
-    launcher.run()
+    val f = launcher.run()
 
     inSequence {
       m.started _ verify()
       m.customCommand _ verify()
       m.stopped _ verify()
     }
+    f.futureValue shouldBe true
   }
 
   "Service component" should " handle command exception" in {
@@ -74,10 +76,11 @@ class TestServiceComponent extends FlatSpec with Matchers with MockFactory {
     val m = stub[ServiceMock]
     implicit val injector = new TestModuleMock(Seq("fail", "quit"), m)
     val launcher = inject[api.ServiceController]
-    launcher.run()
+    val f = launcher.run()
     inSequence {
       m.started _ verify()
       m.stopped _ verify()
     }
+    f.futureValue shouldBe true
   }
 }
