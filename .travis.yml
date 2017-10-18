@@ -1,11 +1,11 @@
 language: scala
 
 scala:
-  - "2.12.1"
-  - "2.11.8"
+  - 2.12.3
+  - 2.11.11
 
 sudo: false
-script: $TRAVIS_BUILD_DIR/travis/build.sh
+script: $TRAVIS_BUILD_DIR/travis/script/build.sh
 
 jdk:
   - oraclejdk8
@@ -15,6 +15,12 @@ cache:
   - $HOME/.m2
   - $HOME/.ivy2
   - $HOME/.sbt
+
+git:
+  submodules: false
+before_install:
+  - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+  - git submodule update --init --recursive
 
 env:
   global:
