@@ -50,7 +50,7 @@ class ConsoleServiceController(serviceIdentifier: Option[String] = None)
     serviceStopped.future
   }
 
-  protected def stop(controlBreak: Boolean): Unit = {
+  def stop(controlBreak: Boolean): Unit = {
     if (!isStopping && service != null) {
       isStopping = true
       if (controlBreak) {
