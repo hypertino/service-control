@@ -10,6 +10,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration.FiniteDuration
 
 trait ServiceMock {
+  def initialized()
   def started()
   def stopped()
   def customCommand()
@@ -17,7 +18,10 @@ trait ServiceMock {
 
 class MyServiceMock(console: Console, mock: ServiceMock) extends api.Service{
   def serviceName = "MyServiceMock"
-  mock.started()
+  mock.initialized()
+  def startService(): Unit = {
+    mock.started()
+  }
   def stopService(controlBreak: Boolean, timeout: FiniteDuration): Future[Unit] = {
     Future.successful(mock.stopped())
   }
@@ -64,6 +68,7 @@ class TestServiceComponent extends FlatSpec with Matchers with MockFactory with 
     val f = launcher.run()
 
     inSequence {
+      m.initialized _ verify()
       m.started _ verify()
       m.customCommand _ verify()
       m.stopped _ verify()
@@ -78,6 +83,7 @@ class TestServiceComponent extends FlatSpec with Matchers with MockFactory with 
     val launcher = inject[api.ServiceController]
     val f = launcher.run()
     inSequence {
+      m.initialized _ verify()
       m.started _ verify()
       m.stopped _ verify()
     }

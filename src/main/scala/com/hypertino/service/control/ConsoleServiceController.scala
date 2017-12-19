@@ -36,6 +36,7 @@ class ConsoleServiceController(serviceIdentifier: Option[String] = None)
   }
 
   def run(): Future[Boolean] = {
+    service.startService()
     breakable {
       for (cmd ← console.inputIterator())
         cmd.foreach { commandString ⇒
