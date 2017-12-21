@@ -19,7 +19,7 @@ trait ServiceMock {
 class MyServiceMock(console: Console, mock: ServiceMock) extends api.Service{
   def serviceName = "MyServiceMock"
   mock.initialized()
-  def startService(): Unit = {
+  override def startService(): Unit = {
     mock.started()
   }
   def stopService(controlBreak: Boolean, timeout: FiniteDuration): Future[Unit] = {
