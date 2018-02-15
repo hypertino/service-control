@@ -1,6 +1,6 @@
 name := "service-control"
 
-version := "0.5-SNAPSHOT"
+version := "0.5.0"
 
 organization := "com.hypertino"
 
