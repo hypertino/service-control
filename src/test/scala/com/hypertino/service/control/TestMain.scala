@@ -5,7 +5,7 @@ import com.hypertino.service.control.api.{Console, Service, ServiceController}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.FiniteDuration
 
-class MyService(console: Console) extends api.Service {
+class MyService(console: Console) extends api.MainService {
   console.writeln("MyService is initialized.")
 
   override def startService(): Unit = {

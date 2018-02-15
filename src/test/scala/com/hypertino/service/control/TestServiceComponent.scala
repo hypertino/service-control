@@ -16,7 +16,7 @@ trait ServiceMock {
   def customCommand()
 }
 
-class MyServiceMock(console: Console, mock: ServiceMock) extends api.Service{
+class MyServiceMock(console: Console, mock: ServiceMock) extends api.MainService{
   def serviceName = "MyServiceMock"
   mock.initialized()
   override def startService(): Unit = {

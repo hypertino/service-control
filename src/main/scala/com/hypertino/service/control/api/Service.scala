@@ -7,3 +7,5 @@ trait Service {
   def startService(): Unit = {} // often we don't need separate initialize/start
   def stopService(controlBreak: Boolean, timeout: FiniteDuration): Future[Unit]
 }
+
+trait MainService extends Service

@@ -1,6 +1,6 @@
 package com.hypertino.service.control
 
-import com.hypertino.service.control.api.{Console, Service, ShutdownMonitor}
+import com.hypertino.service.control.api.{Console, MainService, Service, ShutdownMonitor}
 import org.slf4j.{Logger, LoggerFactory}
 import scaldi.{Injectable, Injector}
 
@@ -24,9 +24,9 @@ class ConsoleServiceController(serviceIdentifier: Option[String] = None)
 
   private val service: Service = try {
     serviceIdentifier.map { si ⇒
-      inject[Service] (identified by si)
+      inject[MainService] (identified by si)
     } getOrElse {
-      inject[Service]
+      inject[MainService]
     }
   }
   catch {
